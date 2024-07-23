@@ -2,6 +2,7 @@ package isi.dan.msclientes.model;
 
 import java.math.BigDecimal;
 
+import isi.dan.msclientes.exception.ObraCambiarEstadoInvalidoException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,6 +12,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
@@ -34,6 +36,7 @@ public class Cliente {
 
 	String cuit;
 
+	@NotNull(message = "El maximo descubierto es obligatorio")
 	@Column(name = "MAXIMO_DESCUBIERTO")
 	@Min(value = 10000, message = "El descubierto maximo debe ser al menos 10000")
 	BigDecimal maximoDescubierto;
@@ -41,13 +44,13 @@ public class Cliente {
 	@Min(value = 0, message = "No se pueden tener cantidades negativas de obras disponibles a realizar")
 	Integer cantObrasDisponibles;
 	
-	public void tomarObra() throws Exception {
+	public void tomarObra() throws ObraCambiarEstadoInvalidoException {
 		if(cantObrasDisponibles==0)
-			throw new Exception("El cliente "+nombre+" ha superado su limite de obras habilitadas en simultaneo");
+			throw new ObraCambiarEstadoInvalidoException("El cliente "+id+" ha superado su limite de obras habilitadas en simultaneo");
 		cantObrasDisponibles--;
 	}
 
-	public void liberarObra() throws Exception {
+	public void liberarObra() {
 		cantObrasDisponibles++;
 	}
 }

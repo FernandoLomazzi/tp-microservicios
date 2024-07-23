@@ -27,7 +27,8 @@ public class Obra {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Integer id;
-
+	
+	@NotNull(message = "La direccion es obligatoria")
 	String direccion;
 
 	@Column(name = "ES_REMODELACION")
@@ -36,7 +37,8 @@ public class Obra {
 	float lat;
 
 	float lng;
-
+	
+	@NotNull(message = "El cliente es obligatorio")
 	@ManyToOne
 	@JoinColumn(name = "ID_CLIENTE")
 	Cliente cliente;

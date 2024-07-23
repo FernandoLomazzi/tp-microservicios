@@ -1,5 +1,10 @@
 package isi.dan.msclientes.dao;
-import org.junit.jupiter.api.AfterAll;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,16 +19,11 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.containers.MySQLContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import isi.dan.msclientes.model.Cliente;
 import isi.dan.msclientes.model.Obra;
-
-import java.math.BigDecimal;
-import java.util.Optional;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import isi.dan.msclientes.servicios.ClienteService;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
@@ -34,15 +34,21 @@ public class ObraRepositoryTest {
 
     Logger log = LoggerFactory.getLogger(ObraRepositoryTest.class);
 
-    @Container
+    //@Container
     public static MySQLContainer<?> mysqlContainer = new MySQLContainer<>("mysql:8.0")
+    		.withReuse(true)
             .withDatabaseName("testdb")
             .withUsername("test")
             .withPassword("test");
-
+    
     @Autowired
     private ObraRepository obraRepository;
+    
+    @Autowired
+    private ClienteRepository clienteRepository;
 
+    private Cliente cliente;
+    
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url", mysqlContainer::getJdbcUrl);
@@ -53,38 +59,63 @@ public class ObraRepositoryTest {
     @BeforeEach
     void iniciarDatos(){
         Obra obra = new Obra();
-        obra.setDireccion("Test Obra 999");
-        obra.setPresupuesto(BigDecimal.valueOf(100));
+		obra.setId(1);
+		obra.setDireccion("Direccion Test Obra");
+		obra.setLat(-12.5f);
+		obra.setLng(21.7f);
+		obra.setPresupuesto(BigDecimal.valueOf(105));
+		cliente = new Cliente();
+		cliente.setId(1);
+		cliente.setNombre("Test Cliente");
+		cliente.setCorreoElectronico("test@cliente.com");
+		cliente.setMaximoDescubierto(BigDecimal.valueOf(150000));
+		cliente = clienteRepository.save(cliente);
+		obra.setCliente(cliente);
         obraRepository.save(obra);
     }
 
+    @BeforeAll
+    public static void beforeAll() {
+    	mysqlContainer.start();
+    }
+    
     @BeforeEach
     void borrarDatos(){
         obraRepository.deleteAll();
     }
 
-    @AfterAll
+    /*@AfterAll
     static void stopContainer() {
         mysqlContainer.stop();
-    }
+    }*/
 
     @Test
     void testSaveAndFindById() {
         Obra obra = new Obra();
-        obra.setDireccion("Test Obra");
-        obraRepository.save(obra);
+		obra.setId(2);
+		obra.setDireccion("Dir test");
+		obra.setLat(0);
+		obra.setLng(0);
+		obra.setPresupuesto(BigDecimal.valueOf(150));
+		obra.setCliente(cliente);
+        obra = obraRepository.save(obra);
 
         Optional<Obra> foundObra = obraRepository.findById(obra.getId());
         log.info("ENCONTRE: {} ",foundObra);
         assertThat(foundObra).isPresent();
-        assertThat(foundObra.get().getDireccion()).isEqualTo("Test Obra");
+        assertThat(foundObra.get().getDireccion()).isEqualTo("Dir test");
+        assertThat(foundObra.get().getLat()).isEqualTo(0);
+        assertThat(foundObra.get().getLng()).isEqualTo(0);
+        assertThat(foundObra.get().getPresupuesto()).isEqualTo(BigDecimal.valueOf(150));
     }
 
     @Test
     void testFindByPresupuesto() {
         Obra obra = new Obra();
-        obra.setDireccion("Test Obra");
-        obra.setPresupuesto(BigDecimal.valueOf(200));
+		obra.setId(2);
+		obra.setDireccion("Dir test");
+		obra.setPresupuesto(BigDecimal.valueOf(150));
+		obra.setCliente(cliente);
         obraRepository.save(obra);
 
         List<Obra> resultado = obraRepository.findByPresupuestoGreaterThanEqual(BigDecimal.valueOf(50));

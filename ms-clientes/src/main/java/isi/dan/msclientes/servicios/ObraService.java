@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import isi.dan.msclientes.dao.ObraRepository;
+import isi.dan.msclientes.exception.ClienteNotFoundException;
+import isi.dan.msclientes.exception.ObraCambiarEstadoInvalidoException;
 import isi.dan.msclientes.model.Cliente;
 import isi.dan.msclientes.model.EstadoObra;
 import isi.dan.msclientes.model.Obra;
@@ -28,15 +30,15 @@ public class ObraService {
 		return obraRepository.findById(id);
 	}
 
-	public Obra save(Obra obra) {
+	public Obra save(Obra obra) throws ClienteNotFoundException {
 		try {
 			Cliente cliente = clienteService.findById(obra.getCliente().getId()).orElseThrow();
 			obra.setCliente(cliente);
 			cliente.tomarObra();
 			obra.setEstado(EstadoObra.HABILITADA);
 		} catch (NoSuchElementException e) {
-			throw e; // hacer otra cosa
-		} catch (Exception e) {
+			throw new ClienteNotFoundException("Cliente " + obra.getCliente().getId() + " no encontrado");
+		} catch (ObraCambiarEstadoInvalidoException e) {
 			obra.setEstado(EstadoObra.PENDIENTE);
 		}
 		return obraRepository.save(obra);
@@ -50,31 +52,31 @@ public class ObraService {
 		obraRepository.deleteById(id);
 	}
 
-	public Obra habilitar(Obra obra) throws Exception {
+	public Obra habilitar(Obra obra) throws ObraCambiarEstadoInvalidoException {
 		if (obra.getEstado().equals(EstadoObra.FINALIZADA))
-			throw new Exception("No se puede habilitar una obra finalizada");
+			throw new ObraCambiarEstadoInvalidoException("No se puede habilitar una obra finalizada");
 		if (obra.getEstado().equals(EstadoObra.HABILITADA))
-			throw new Exception("La obra ya se encuentra habilitada");
+			throw new ObraCambiarEstadoInvalidoException("La obra ya se encuentra habilitada");
 		obra.getCliente().tomarObra();
 		obra.setEstado(EstadoObra.HABILITADA);
 		return this.update(obra);
 	}
 
-	public Obra deshabilitar(Obra obra) throws Exception {
+	public Obra deshabilitar(Obra obra) throws ObraCambiarEstadoInvalidoException {
 		if (obra.getEstado().equals(EstadoObra.FINALIZADA))
-			throw new Exception("No se puede deshabilitar una obra finalizada");
+			throw new ObraCambiarEstadoInvalidoException("No se puede deshabilitar una obra finalizada");
 		if (obra.getEstado().equals(EstadoObra.PENDIENTE))
-			throw new Exception("La obra ya se encuentra pendiente");
+			throw new ObraCambiarEstadoInvalidoException("La obra ya se encuentra pendiente");
 		obra.getCliente().liberarObra();
 		obra.setEstado(EstadoObra.PENDIENTE);
 		return this.update(obra);
 	}
 
-	public Obra finalizar(Obra obra) throws Exception {
+	public Obra finalizar(Obra obra) throws ObraCambiarEstadoInvalidoException {
 		if (obra.getEstado().equals(EstadoObra.FINALIZADA))
-			throw new Exception("La obra ya se encuentra finalizada");
+			throw new ObraCambiarEstadoInvalidoException("La obra ya se encuentra finalizada");
 		if (obra.getEstado().equals(EstadoObra.PENDIENTE))
-			throw new Exception("La obra debe estar habilitada para ser finalizada");
+			throw new ObraCambiarEstadoInvalidoException("La obra debe estar habilitada para ser finalizada");
 		obra.getCliente().liberarObra();
 		obra.setEstado(EstadoObra.FINALIZADA);
 		List<Obra> obras = obtenerObras(obra.getCliente().getId(), EstadoObra.PENDIENTE);
