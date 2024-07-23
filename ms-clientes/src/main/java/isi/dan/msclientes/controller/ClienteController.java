@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +22,7 @@ import isi.dan.msclientes.aop.LogExecutionTime;
 import isi.dan.msclientes.exception.ClienteNotFoundException;
 import isi.dan.msclientes.model.Cliente;
 import isi.dan.msclientes.servicios.ClienteService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/clientes")
@@ -30,7 +30,7 @@ public class ClienteController {
 
 	Logger log = LoggerFactory.getLogger(ClienteController.class);
 
-	@Value("${dan.clientes.instancia}")
+	@Value("${dan.clientes.instancia:ms-clientes-svc-default}")
 	private String instancia;
 
 	@Autowired
@@ -59,13 +59,13 @@ public class ClienteController {
 
 	@PostMapping
 	@LogExecutionTime
-	public Cliente create(@RequestBody @Validated Cliente cliente) {
+	public Cliente create(@RequestBody @Valid Cliente cliente) {
 		return clienteService.save(cliente);
 	}
 
 	@PutMapping("/{id}")
 	@LogExecutionTime
-	public ResponseEntity<Cliente> update(@PathVariable final Integer id, @RequestBody Cliente cliente)
+	public ResponseEntity<Cliente> update(@PathVariable final Integer id, @RequestBody @Valid Cliente cliente)
 			throws ClienteNotFoundException {
 		if (!clienteService.findById(id).isPresent()) {
 			throw new ClienteNotFoundException("Cliente " + id + " no encontrado");
