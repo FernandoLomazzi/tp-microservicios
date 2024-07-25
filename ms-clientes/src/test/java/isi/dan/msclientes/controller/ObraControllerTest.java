@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -24,6 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import isi.dan.msclientes.exception.ObraCambiarEstadoInvalidoException;
 import isi.dan.msclientes.model.Cliente;
 import isi.dan.msclientes.model.Obra;
 import isi.dan.msclientes.servicios.ObraService;
@@ -108,6 +108,7 @@ public class ObraControllerTest {
 		Mockito.when(obraService.update(Mockito.any(Obra.class))).thenReturn(obraUpdated);
 		
 		mockMvc.perform(put("/api/obras/1").contentType(MediaType.APPLICATION_JSON).content(asJsonString(obra)))
+			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.direccion").value("Direccion Test Obra updated"))
 			.andExpect(jsonPath("$.lat").value(0))
 			.andExpect(jsonPath("$.lng").value(0))
@@ -123,6 +124,84 @@ public class ObraControllerTest {
 		mockMvc.perform(delete("/api/obras/1")).andExpect(status().isNoContent());
 	}
 
+	@Test
+	void habilitarTest() throws Exception {
+		Mockito.when(obraService.findById(1)).thenReturn(Optional.of(obra));
+		Mockito.when(obraService.habilitar(obra)).thenReturn(obra);
+		mockMvc.perform(put("/api/obras/1/habilitar").contentType(MediaType.APPLICATION_JSON).content(asJsonString(obra)))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.direccion").value("Direccion Test Obra"))
+			.andExpect(jsonPath("$.lat").value(-12.5f))
+			.andExpect(jsonPath("$.lng").value(21.7f))
+			.andExpect(jsonPath("$.presupuesto").value(105))
+			.andExpect(jsonPath("$.cliente.id").value(1));
+	}
+	
+	@Test
+	void habilitarErrorTest() throws Exception {
+		// not found
+		Mockito.when(obraService.findById(1)).thenReturn(Optional.empty());
+		mockMvc.perform(put("/api/obras/1/habilitar").contentType(MediaType.APPLICATION_JSON).content(asJsonString(obra)))
+			.andExpect(status().isNotFound());
+		// conflict
+		Mockito.when(obraService.findById(1)).thenReturn(Optional.of(obra));
+		Mockito.when(obraService.habilitar(obra)).thenThrow(ObraCambiarEstadoInvalidoException.class);
+		mockMvc.perform(put("/api/obras/1/habilitar").contentType(MediaType.APPLICATION_JSON).content(asJsonString(obra)))
+			.andExpect(status().isConflict());
+	}
+	
+	@Test
+	void deshabilitarTest() throws Exception {
+		Mockito.when(obraService.findById(1)).thenReturn(Optional.of(obra));
+		Mockito.when(obraService.deshabilitar(obra)).thenReturn(obra);
+		mockMvc.perform(put("/api/obras/1/deshabilitar").contentType(MediaType.APPLICATION_JSON).content(asJsonString(obra)))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.direccion").value("Direccion Test Obra"))
+			.andExpect(jsonPath("$.lat").value(-12.5f))
+			.andExpect(jsonPath("$.lng").value(21.7f))
+			.andExpect(jsonPath("$.presupuesto").value(105))
+			.andExpect(jsonPath("$.cliente.id").value(1));
+	}
+	
+	@Test
+	void deshabilitarErrorTest() throws Exception {
+		// not found
+		Mockito.when(obraService.findById(1)).thenReturn(Optional.empty());
+		mockMvc.perform(put("/api/obras/1/deshabilitar").contentType(MediaType.APPLICATION_JSON).content(asJsonString(obra)))
+			.andExpect(status().isNotFound());
+		// conflict
+		Mockito.when(obraService.findById(1)).thenReturn(Optional.of(obra));
+		Mockito.when(obraService.deshabilitar(obra)).thenThrow(ObraCambiarEstadoInvalidoException.class);
+		mockMvc.perform(put("/api/obras/1/deshabilitar").contentType(MediaType.APPLICATION_JSON).content(asJsonString(obra)))
+			.andExpect(status().isConflict());
+	}
+	
+	@Test
+	void finalizarTest() throws Exception {
+		Mockito.when(obraService.findById(1)).thenReturn(Optional.of(obra));
+		Mockito.when(obraService.finalizar(obra)).thenReturn(obra);
+		mockMvc.perform(put("/api/obras/1/finalizar").contentType(MediaType.APPLICATION_JSON).content(asJsonString(obra)))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.direccion").value("Direccion Test Obra"))
+			.andExpect(jsonPath("$.lat").value(-12.5f))
+			.andExpect(jsonPath("$.lng").value(21.7f))
+			.andExpect(jsonPath("$.presupuesto").value(105))
+			.andExpect(jsonPath("$.cliente.id").value(1));
+	}
+	
+	@Test
+	void finalizarErrorTest() throws Exception {
+		// not found
+		Mockito.when(obraService.findById(1)).thenReturn(Optional.empty());
+		mockMvc.perform(put("/api/obras/1/finalizar").contentType(MediaType.APPLICATION_JSON).content(asJsonString(obra)))
+			.andExpect(status().isNotFound());
+		// conflict
+		Mockito.when(obraService.findById(1)).thenReturn(Optional.of(obra));
+		Mockito.when(obraService.finalizar(obra)).thenThrow(ObraCambiarEstadoInvalidoException.class);
+		mockMvc.perform(put("/api/obras/1/finalizar").contentType(MediaType.APPLICATION_JSON).content(asJsonString(obra)))
+			.andExpect(status().isConflict());
+	}	
+	
 	private static String asJsonString(final Object obj) {
 		try {
 			return new ObjectMapper().writeValueAsString(obj);
