@@ -13,14 +13,17 @@ import java.util.List;
 @Data
 public class Pedido {
     @Id
-    private String id;
-    private Instant fecha;
-    private Integer numeroPedido;
-    private String usuario;
-    private String observaciones;
-
-    private Cliente cliente;
-    private BigDecimal total;
+    String id;
+    Instant fecha;
+    Integer numeroPedido;
+    String usuario;
+    String observaciones;
+    
+    EstadoPedido estado;
+    List<HistorialEstado> historialEstado;
+    Obra obra;
+    Cliente cliente;
+    BigDecimal total;
 
     @Field("detalle")
     private List<DetallePedido> detalle;

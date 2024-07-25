@@ -25,6 +25,7 @@ public class PedidoService {
 
 
     public Pedido savePedido(Pedido pedido) {
+        //poner logica
         for( DetallePedido dp : pedido.getDetalle()){
             log.info("Enviando {}", dp.getProducto().getId()+";"+dp.getCantidad());
             rabbitTemplate.convertAndSend(RabbitMQConfig.STOCK_UPDATE_QUEUE, dp.getProducto().getId()+";"+dp.getCantidad());
@@ -42,5 +43,9 @@ public class PedidoService {
 
     public void deletePedido(String id) {
         pedidoRepository.deleteById(id);
+    }
+
+    public Pedido update(Pedido pedidoUpdateable) {
+        return pedidoRepository.save(pedidoUpdateable);
     }
 }
