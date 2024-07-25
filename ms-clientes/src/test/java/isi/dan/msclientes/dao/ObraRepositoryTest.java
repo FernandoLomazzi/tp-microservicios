@@ -23,7 +23,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import isi.dan.msclientes.model.Cliente;
 import isi.dan.msclientes.model.Obra;
-import isi.dan.msclientes.servicios.ClienteService;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
