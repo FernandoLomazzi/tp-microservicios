@@ -13,6 +13,7 @@ import isi.dan.ms.pedidos.servicio.PedidoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Instant;
 import java.util.List;
 
 
@@ -28,7 +29,10 @@ public class PedidoController {
 
     @PostMapping
     public ResponseEntity<Pedido> createPedido(@RequestBody Pedido pedido) {
+        
+        pedido.setFecha(Instant.now());
         Pedido savedPedido = pedidoService.savePedido(pedido);
+        log.debug("Creado!!");
         return ResponseEntity.ok(savedPedido);
     }
 
@@ -58,5 +62,20 @@ public class PedidoController {
          }
         
     }
+
+
+ 
+    @PutMapping("/{id}")
+    public ResponseEntity<Pedido> update(@PathVariable String id, @RequestBody Pedido pedidoUpdatear) throws PedidoNotFoundException {
+        Pedido pedido = pedidoService.getPedidoById(id);
+        if(pedido !=null){
+            
+        return ResponseEntity.ok(pedidoService.update(pedidoUpdatear, id));
+         }else{
+             throw new PedidoNotFoundException("Pedido '" + id + "' no encontrado");
+         }
+        
+        
+}
 }
 

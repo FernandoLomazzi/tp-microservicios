@@ -45,7 +45,8 @@ public class PedidoService {
         pedidoRepository.deleteById(id);
     }
 
-    public Pedido update(Pedido pedidoUpdateable) {
+    public Pedido update(Pedido pedidoUpdateable, String id) {
+        pedidoUpdateable.setId(id);
         return pedidoRepository.save(pedidoUpdateable);
     }
 }
