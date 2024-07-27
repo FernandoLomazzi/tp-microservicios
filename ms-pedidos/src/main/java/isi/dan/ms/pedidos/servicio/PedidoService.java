@@ -33,6 +33,7 @@ public class PedidoService {
 
     public Pedido savePedido(Pedido pedido) {
         // id se pone automatico por mongo
+
         // colocar fecha
         pedido.setFecha(Instant.now());
 
@@ -61,11 +62,11 @@ public class PedidoService {
         saldo = saldo.add(pedido.getTotal());
 
         if (saldo.compareTo(resultado.getMaximoDescubierto()) > 0) {
-            pedido.setEstado(EstadoPedido.RECHAZADO);
+            pedido.updateState(EstadoPedido.RECHAZADO,pedido.getUsuario(),null);
 
             return pedidoRepository.save(pedido);
         } else {
-            pedido.setEstado(EstadoPedido.ACEPTADO);
+            pedido.updateState(EstadoPedido.ACEPTADO,pedido.getUsuario(),null);
         }
 
         // verificar stock
@@ -78,7 +79,7 @@ public class PedidoService {
 
             if (producto.getStockActual() < dp.getCantidad()) {
                 log.info(dp.getProducto().getNombre() + " stock insuficiente");
-                pedido.setEstado(EstadoPedido.ACEPTADO);
+                pedido.updateState(EstadoPedido.ACEPTADO,pedido.getUsuario(),null);
                 flagStockDisponible = false;
                 break;
             } else {
@@ -89,7 +90,7 @@ public class PedidoService {
 
         // actualizacion de stock
         if (flagStockDisponible) {
-            pedido.setEstado(EstadoPedido.EN_PREPARACION);
+            pedido.updateState(EstadoPedido.EN_PREPARACION,pedido.getUsuario(),null);
             for (DetallePedido dp : pedido.getDetalle()) {
                 log.info("Enviando {}", dp.getProducto().getId() + ";" + dp.getCantidad());
                 rabbitTemplate.convertAndSend(RabbitMQConfig.STOCK_UPDATE_QUEUE,

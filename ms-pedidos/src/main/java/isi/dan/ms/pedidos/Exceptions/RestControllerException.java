@@ -48,6 +48,17 @@ public class RestControllerException {
 				new ErrorInfo(Instant.now(), e.getMessage(), detalle, HttpStatus.NOT_FOUND.value()),
 				HttpStatus.NOT_FOUND);
 	}
+	@ExceptionHandler(IlegalStateException.class)
+	public ResponseEntity<ErrorInfo> handleIlegalStateException(IlegalStateException ex) {
+		logger.error("ERROR Estado ilegal ", ex);
+		String detalle = ex.getCause() == null ? "El estado indicado no es correcto" : ex.getCause().getMessage();
+
+		return new ResponseEntity<ErrorInfo>(
+				new ErrorInfo(Instant.now(), ex.getMessage(), detalle, HttpStatus.NOT_FOUND.value()),
+				HttpStatus.NOT_FOUND);
+	}
+
+
 	private Map<String, List<String>> getErrorsMap(List<String> errors) {
 		Map<String, List<String>> errorResponse = new HashMap<>();
 		errorResponse.put("errors", errors);

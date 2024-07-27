@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import isi.dan.ms.pedidos.Exceptions.ClienteNotFoundException;
+import isi.dan.ms.pedidos.Exceptions.IlegalStateException;
 import isi.dan.ms.pedidos.Exceptions.PedidoNotFoundException;
 import isi.dan.ms.pedidos.modelo.EstadoPedido;
 import isi.dan.ms.pedidos.modelo.Pedido;
@@ -76,6 +77,33 @@ public class PedidoController {
          }
         
         
+}
+
+@PutMapping("/{id}/estado/{estado}")
+public ResponseEntity<Pedido> update(@PathVariable String id, @PathVariable String estado) throws PedidoNotFoundException, IlegalStateException {
+    Pedido pedido = pedidoService.getPedidoById(id);
+    if(pedido !=null){
+            
+           try{
+            EstadoPedido estadoPedido = EstadoPedido.valueOf(estado.toUpperCase());
+            if(estadoPedido==EstadoPedido.CANCELADO){
+//hay que handlear en caso de que se cancele la devolucion del stock
+            }
+            pedido.updateState(estadoPedido,pedido.getUsuario(),null);
+            return ResponseEntity.ok(pedidoService.update(pedido, id));
+           } catch( IllegalArgumentException ex){
+            throw new IlegalStateException("estado: "+estado +" no es un estado valido");
+           }
+            
+            
+        
+            
+            
+     }else{
+         throw new PedidoNotFoundException("Pedido '" + id + "' no encontrado");
+     }
+    
+    
 }
 }
 

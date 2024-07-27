@@ -7,6 +7,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 @Document(collection = "pedidos")
@@ -20,13 +21,22 @@ public class Pedido {
     String observaciones;
     
     EstadoPedido estado;
-    List<HistorialEstado> historialEstado;
+    List<HistorialEstado> historialEstado = new ArrayList<HistorialEstado>();
     Obra obra;
     Cliente cliente;
     BigDecimal total;
 
     @Field("detalle")
     private List<DetallePedido> detalle;
+
+    public void updateState(EstadoPedido nuevoEstado, String userEstado, String detalle){
+    if(this.estado==null){
+        historialEstado.add(new HistorialEstado(nuevoEstado, userEstado, detalle));
+    }
+    historialEstado.add(new HistorialEstado(this.estado, userEstado, detalle));
+    this.estado= nuevoEstado;
+
+    }
 
 }
 

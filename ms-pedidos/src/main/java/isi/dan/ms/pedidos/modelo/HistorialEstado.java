@@ -14,4 +14,13 @@ public class HistorialEstado {
     Instant fechaEstado;
     String userEstado;
     String detalle;
+
+    public HistorialEstado(EstadoPedido estado, String userEstado, String detalle) {
+        this.estado = estado;
+        this.fechaEstado= Instant.now();
+        this.userEstado=userEstado;
+        this.detalle=detalle;
+    }
 }
+
+
