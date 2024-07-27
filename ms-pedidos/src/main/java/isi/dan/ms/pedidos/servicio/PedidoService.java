@@ -45,50 +45,50 @@ public class PedidoService {
         RestTemplate restTemplate = new RestTemplate();
         String gatewayURL = "http://ms-gateway-svc:8080";
 
- // verificar saldo
- Cliente resultado = restTemplate.getForObject(gatewayURL + "/clientes/api/clientes/"+pedido.getCliente().getId()  , Cliente.class);
-    BigDecimal saldo= BigDecimal.ZERO;
-    //costos de pedidos previos
-    for(Pedido p: this.getAllPedidos()){
-        if(p.getCliente().getId()==resultado.getId()&&(p.getEstado()==EstadoPedido.ACEPTADO ||p.getEstado()==EstadoPedido.EN_PREPARACION))
-        saldo= saldo.add(p.getTotal());
-
-    }
-    //costo del pedido actual
-    saldo= saldo.add(pedido.getTotal());
- 
-          if( saldo.compareTo(resultado.getMaximoDescubierto())>0){
-         pedido.setEstado(EstadoPedido.RECHAZADO);
-         
-         return pedidoRepository.save(pedido);
-          } else{
-          pedido.setEstado(EstadoPedido.ACEPTADO);
-          }
-        
-
- // verificar stock
-        
-        
-          Boolean flagStockDisponible=true;
-        for (DetallePedido dp : pedido.getDetalle()) {
-        
-            Producto producto = restTemplate.getForObject(gatewayURL + "/productos/api/productos/" + dp.getProducto().getId(), Producto.class);
-            
-            
-            if(producto.getStockActual()<dp.getCantidad()){
-                log.info(dp.getProducto().getNombre()+ " stock insuficiente");
-                pedido.setEstado(EstadoPedido.ACEPTADO);
-                flagStockDisponible=false;
-                break;
-            }else{
-                log.info(dp.getProducto().getNombre()+ " hay stock ");
-            }
-
+        // verificar saldo
+        Cliente resultado = restTemplate
+                .getForObject(gatewayURL + "/clientes/api/clientes/" + pedido.getCliente().getId(), Cliente.class);
+        pedido.setCliente(resultado);
+        BigDecimal saldo = BigDecimal.ZERO;
+        // costos de pedidos previos
+        for (Pedido p : this.getAllPedidos()) {
+            if (p.getCliente().getId() == resultado.getId()
+                    && (p.getEstado() == EstadoPedido.ACEPTADO || p.getEstado() == EstadoPedido.EN_PREPARACION))
+                saldo = saldo.add(p.getTotal());
 
         }
-        
+        // costo del pedido actual
+        saldo = saldo.add(pedido.getTotal());
+
+        if (saldo.compareTo(resultado.getMaximoDescubierto()) > 0) {
+            pedido.setEstado(EstadoPedido.RECHAZADO);
+
+            return pedidoRepository.save(pedido);
+        } else {
+            pedido.setEstado(EstadoPedido.ACEPTADO);
+        }
+
+        // verificar stock
+
+        Boolean flagStockDisponible = true;
+        for (DetallePedido dp : pedido.getDetalle()) {
+
+            Producto producto = restTemplate
+                    .getForObject(gatewayURL + "/productos/api/productos/" + dp.getProducto().getId(), Producto.class);
+
+            if (producto.getStockActual() < dp.getCantidad()) {
+                log.info(dp.getProducto().getNombre() + " stock insuficiente");
+                pedido.setEstado(EstadoPedido.ACEPTADO);
+                flagStockDisponible = false;
+                break;
+            } else {
+                log.info(dp.getProducto().getNombre() + " hay stock ");
+            }
+
+        }
+
         // actualizacion de stock
-        if(flagStockDisponible){
+        if (flagStockDisponible) {
             pedido.setEstado(EstadoPedido.EN_PREPARACION);
             for (DetallePedido dp : pedido.getDetalle()) {
                 log.info("Enviando {}", dp.getProducto().getId() + ";" + dp.getCantidad());
