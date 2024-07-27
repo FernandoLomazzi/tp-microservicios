@@ -1,6 +1,8 @@
 package isi.dan.ms.pedidos.modelo;
 
 
+import java.math.BigDecimal;
+
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Data;
@@ -13,5 +15,6 @@ public class Cliente {
     private String nombre;
     private String correoElectronico;
     private String cuit;
+    private BigDecimal maximoDescubierto;
 
 }

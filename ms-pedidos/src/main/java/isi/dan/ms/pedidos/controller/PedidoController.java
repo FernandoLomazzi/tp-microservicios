@@ -30,7 +30,7 @@ public class PedidoController {
     @PostMapping
     public ResponseEntity<Pedido> createPedido(@RequestBody Pedido pedido) {
         
-        pedido.setFecha(Instant.now());
+        
         Pedido savedPedido = pedidoService.savePedido(pedido);
         log.debug("Creado!!");
         return ResponseEntity.ok(savedPedido);
