@@ -1,8 +1,11 @@
 package isi.dan.ms.pedidos.modelo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import isi.dan.ms.pedidos.servicio.PedidoService;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -30,12 +33,11 @@ public class Pedido {
     private List<DetallePedido> detalle;
 
     public void updateState(EstadoPedido nuevoEstado, String userEstado, String detalle){
-    if(this.estado==null){
-        historialEstado.add(new HistorialEstado(nuevoEstado, userEstado, detalle));
-    }
-    historialEstado.add(new HistorialEstado(this.estado, userEstado, detalle));
+        Logger log = LoggerFactory.getLogger(PedidoService.class);
+    
+    historialEstado.add(new HistorialEstado(nuevoEstado, userEstado, detalle));
     this.estado= nuevoEstado;
-
+    log.info("me he actualizado a: "+ this.estado.toString());
     }
 
 }

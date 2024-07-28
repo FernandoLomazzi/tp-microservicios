@@ -79,7 +79,6 @@ public class PedidoService {
 
             if (producto.getStockActual() < dp.getCantidad()) {
                 log.info(dp.getProducto().getNombre() + " stock insuficiente");
-                pedido.updateState(EstadoPedido.ACEPTADO,pedido.getUsuario(),null);
                 flagStockDisponible = false;
                 break;
             } else {
