@@ -88,6 +88,7 @@ public ResponseEntity<Pedido> update(@PathVariable String id, @PathVariable Stri
             EstadoPedido estadoPedido = EstadoPedido.valueOf(estado.toUpperCase());
             if(estadoPedido==EstadoPedido.CANCELADO){
 //hay que handlear en caso de que se cancele la devolucion del stock
+                pedidoService.restockProducts(pedido);
             }
             pedido.updateState(estadoPedido,pedido.getUsuario(),null);
             return ResponseEntity.ok(pedidoService.update(pedido, id));

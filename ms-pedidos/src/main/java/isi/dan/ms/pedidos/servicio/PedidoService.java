@@ -90,11 +90,13 @@ public class PedidoService {
         // actualizacion de stock
         if (flagStockDisponible) {
             pedido.updateState(EstadoPedido.EN_PREPARACION,pedido.getUsuario(),null);
+            log.info("enviando update de stock de productos");
             for (DetallePedido dp : pedido.getDetalle()) {
                 log.info("Enviando {}", dp.getProducto().getId() + ";" + dp.getCantidad());
                 rabbitTemplate.convertAndSend(RabbitMQConfig.STOCK_UPDATE_QUEUE,
                         dp.getProducto().getId() + ";" + dp.getCantidad());
             }
+            
         }
         return pedidoRepository.save(pedido);
     }
@@ -114,5 +116,13 @@ public class PedidoService {
     public Pedido update(Pedido pedidoUpdateable, String id) {
         pedidoUpdateable.setId(id);
         return pedidoRepository.save(pedidoUpdateable);
+    }
+    public void restockProducts(Pedido pedido){
+        log.info("enviando reestock de productos por pedido cancelado");
+        for (DetallePedido dp : pedido.getDetalle()) {
+            log.info("Enviando {}", dp.getProducto().getId() + ";" + dp.getCantidad());
+            rabbitTemplate.convertAndSend(RabbitMQConfig.STOCK_UPDATE_QUEUE,
+                    dp.getProducto().getId() + ";" + (-dp.getCantidad()));
+        }
     }
 }
