@@ -65,7 +65,21 @@ public class PedidoController {
         }
         
     }
-   
+    @DeleteMapping("/nroPedido/{id}")
+    public ResponseEntity<Pedido> DeletePedidoBynro(@PathVariable String id) throws PedidoNotFoundException {
+        log.info("Entrando al método DeletePedidoBynro con id: " + id);
+      
+        Pedido pedido = pedidoService.getPedidoByNroPedido(id);
+        if(pedido !=null){
+
+            pedidoService.deletePedido(pedido.getId());
+            log.debug("Pedido eliminado!!");
+        return ResponseEntity.noContent().build();
+        }else{
+            throw new PedidoNotFoundException("Pedido '" + id + "' no encontrado");
+        }
+        
+    }
 
      
 
