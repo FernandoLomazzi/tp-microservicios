@@ -33,7 +33,8 @@ public class PedidoService {
 
     public Pedido savePedido(Pedido pedido) {
         // id se pone automatico por mongo
-
+        //nro de pedido
+        pedido.setNumeroPedido(this.getMaxNumeroPedido()+1);
         // colocar fecha
         pedido.setFecha(Instant.now());
 
@@ -125,4 +126,27 @@ public class PedidoService {
                     dp.getProducto().getId() + ";" + (-dp.getCantidad()));
         }
     }
+
+    public Pedido getPedidoByNroPedido(String nroPedido){
+        log.info("entrado a getPedidoByNro");
+        Pedido pedido = new Pedido();
+        for(Pedido p: this.getAllPedidos()){
+            if(p.getNumeroPedido()==Integer.parseInt(nroPedido)){
+                pedido= p;
+                break;
+            }
+        }
+        log.info("saliendo de getPedidoByNro");
+        if(pedido.getId()==null) return null;
+        return pedido;
+    }
+
+    public Integer getMaxNumeroPedido() {
+        List<Pedido> pedidos = this.getAllPedidos();
+        return pedidos.stream()
+                .map(Pedido::getNumeroPedido) 
+                .max(Integer::compareTo)       // Encontrar el valor máximo
+                .orElse(0);                    // Devolver 0 si la lista está vacía
+    }
+
 }

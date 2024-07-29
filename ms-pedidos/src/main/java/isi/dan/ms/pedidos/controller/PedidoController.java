@@ -33,7 +33,7 @@ public class PedidoController {
         
         
         Pedido savedPedido = pedidoService.savePedido(pedido);
-        log.debug("Creado!!");
+        log.debug("Pedido creado!!");
         return ResponseEntity.ok(savedPedido);
     }
 
@@ -44,6 +44,7 @@ public class PedidoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Pedido> getPedidoById(@PathVariable String id) throws PedidoNotFoundException {
+        log.info("Entrando al método getPedidoById con id: " + id);
         Pedido pedido = pedidoService.getPedidoById(id);
         if(pedido !=null){
            return ResponseEntity.ok(pedido);
@@ -52,11 +53,28 @@ public class PedidoController {
         }
     }
 
+    @GetMapping("/nroPedido/{id}")
+    public ResponseEntity<Pedido> getPedidoBynro(@PathVariable String id) throws PedidoNotFoundException {
+        log.info("Entrando al método getPedidoByNroPedido con id: " + id);
+      
+        Pedido pedido = pedidoService.getPedidoByNroPedido(id);
+        if(pedido !=null){
+           return ResponseEntity.ok(pedido);
+        }else{
+            throw new PedidoNotFoundException("Pedido '" + id + "' no encontrado");
+        }
+        
+    }
+   
+
+     
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePedido(@PathVariable String id) throws PedidoNotFoundException {
         Pedido pedido = pedidoService.getPedidoById(id);
         if(pedido !=null){
             pedidoService.deletePedido(id);
+            log.debug("Pedido eliminado!!");
         return ResponseEntity.noContent().build();
          }else{
              throw new PedidoNotFoundException("Pedido '" + id + "' no encontrado");
@@ -70,7 +88,7 @@ public class PedidoController {
     public ResponseEntity<Pedido> update(@PathVariable String id, @RequestBody Pedido pedidoUpdatear) throws PedidoNotFoundException {
         Pedido pedido = pedidoService.getPedidoById(id);
         if(pedido !=null){
-            
+            log.debug("Pedido actualizado!!");
         return ResponseEntity.ok(pedidoService.update(pedidoUpdatear, id));
          }else{
              throw new PedidoNotFoundException("Pedido '" + id + "' no encontrado");
@@ -91,6 +109,7 @@ public ResponseEntity<Pedido> update(@PathVariable String id, @PathVariable Stri
                 pedidoService.restockProducts(pedido);
             }
             pedido.updateState(estadoPedido,pedido.getUsuario(),null);
+            log.debug("Pedido actualizado!!");
             return ResponseEntity.ok(pedidoService.update(pedido, id));
            } catch( IllegalArgumentException ex){
             throw new IlegalStateException("estado: "+estado +" no es un estado valido");
