@@ -10,13 +10,13 @@ import org.testcontainers.utility.DockerImageName;
 
 @TestConfiguration(proxyBeanMethods = false)
 public class TestMsPedidosApplication {
-/*
+
 	@Bean
 	@ServiceConnection
 	MongoDBContainer mongoDbContainer() {
 		return new MongoDBContainer(DockerImageName.parse("mongo:latest"));
 	}
-	*/
+	
 
 	@Bean
 	@ServiceConnection
