@@ -111,6 +111,19 @@ public class PedidoController {
         
 }
 
+@PutMapping("/nroPedido/{id}")
+    public ResponseEntity<Pedido> updateByNroPedido(@PathVariable String id, @RequestBody Pedido pedidoUpdatear) throws PedidoNotFoundException {
+        Pedido pedido = pedidoService.getPedidoByNroPedido(id);
+        if(pedido !=null){
+            log.debug("Pedido actualizado!!");
+        return ResponseEntity.ok(pedidoService.update(pedidoUpdatear, pedido.getId()));
+         }else{
+             throw new PedidoNotFoundException("Pedido '" + id + "' no encontrado");
+         }
+        
+        
+}
+
 @PutMapping("/{id}/estado/{estado}")
 public ResponseEntity<Pedido> update(@PathVariable String id, @PathVariable String estado) throws PedidoNotFoundException, IlegalStateException {
     Pedido pedido = pedidoService.getPedidoById(id);
@@ -127,17 +140,36 @@ public ResponseEntity<Pedido> update(@PathVariable String id, @PathVariable Stri
             return ResponseEntity.ok(pedidoService.update(pedido, id));
            } catch( IllegalArgumentException ex){
             throw new IlegalStateException("estado: "+estado +" no es un estado valido");
-           }
-            
-            
-        
-            
-            
+           }    
      }else{
          throw new PedidoNotFoundException("Pedido '" + id + "' no encontrado");
      }
     
     
 }
+@PutMapping("/nroPedido/{id}/estado/{estado}")
+public ResponseEntity<Pedido> updateByNroPedidoAndState(@PathVariable String id, @PathVariable String estado) throws PedidoNotFoundException, IlegalStateException {
+    Pedido pedido = pedidoService.getPedidoByNroPedido(id);
+    if(pedido !=null){
+            
+           try{
+            EstadoPedido estadoPedido = EstadoPedido.valueOf(estado.toUpperCase());
+            if(estadoPedido==EstadoPedido.CANCELADO){
+//hay que handlear en caso de que se cancele la devolucion del stock
+                pedidoService.restockProducts(pedido);
+            }
+            pedido.updateState(estadoPedido,pedido.getUsuario(),null);
+            log.debug("Pedido actualizado!!");
+            return ResponseEntity.ok(pedidoService.update(pedido, pedido.getId()));
+           } catch( IllegalArgumentException ex){
+            throw new IlegalStateException("estado: "+estado +" no es un estado valido");
+           }    
+     }else{
+         throw new PedidoNotFoundException("Pedido '" + id + "' no encontrado");
+     }
+    
+    
+}
+
 }
 

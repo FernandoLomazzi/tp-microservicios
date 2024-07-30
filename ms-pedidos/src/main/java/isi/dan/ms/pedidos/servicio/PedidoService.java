@@ -113,12 +113,19 @@ public class PedidoService {
     public void deletePedido(String id) {
         pedidoRepository.deleteById(id);
     }
+    public void deletePedidoByNumero(String id) {
+        pedidoRepository.deleteById(this.getPedidoByNroPedido(id).getId());
+    }
 
 
     public Pedido update(Pedido pedidoUpdateable, String id) {
         pedidoUpdateable.setId(id);
         return pedidoRepository.save(pedidoUpdateable);
     }
+
+
+
+    
     public void restockProducts(Pedido pedido){
         log.info("enviando reestock de productos por pedido cancelado");
         for (DetallePedido dp : pedido.getDetalle()) {

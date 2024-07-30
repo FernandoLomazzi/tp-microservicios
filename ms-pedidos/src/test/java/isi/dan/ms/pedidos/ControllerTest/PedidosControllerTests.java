@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -42,6 +43,7 @@ public class PedidosControllerTests {
 
 	private Cliente cliente;
     private Pedido pedido;
+    private Pedido pedido2;
     private Obra obra;
     private Producto producto;
     @BeforeEach
@@ -80,10 +82,11 @@ public class PedidosControllerTests {
 
         List<DetallePedido> detalles = new ArrayList<>();
         detalles.add(detallePedido);
-		//pedido
+		//pedido1
         pedido = new Pedido();
         pedido.setId("pedido123");
-        pedido.setFecha(Instant.now());
+        //no la soporta
+       // pedido.setFecha(Instant.now());
         pedido.setNumeroPedido(12345);
         pedido.setUsuario("usuario1");
         pedido.setObservaciones("Observaciones del pedido");
@@ -93,6 +96,20 @@ public class PedidosControllerTests {
         pedido.setCliente(cliente);
         pedido.setTotal(new BigDecimal("1000.00"));
         pedido.setDetalle(detalles);
+        //pedido2
+        pedido2 = new Pedido();
+        pedido2.setId("pedido123");
+        //no la soporta
+       // pedido.setFecha(Instant.now());
+        pedido2.setNumeroPedido(12345);
+        pedido2.setUsuario("usuario1");
+        pedido2.setObservaciones("Observaciones del pedido");
+        pedido2.setEstado(EstadoPedido.RECHAZADO);
+       
+        pedido2.setObra(obra);
+        pedido2.setCliente(cliente);
+        pedido2.setTotal(new BigDecimal("1000.00"));
+        pedido2.setDetalle(detalles);
 	}
 
     @Test
@@ -107,5 +124,47 @@ public class PedidosControllerTests {
 	}
 
 
+    @Test
+	void testCreate() throws Exception {
+		Mockito.when(PedidoService.savePedido(Mockito.any(Pedido.class))).thenReturn(pedido);
 
+		mockMvc.perform(post("/api/pedidos").contentType(MediaType.APPLICATION_JSON).content(asJsonString(pedido)))
+				.andExpect(status().isOk()).andExpect(jsonPath("$.numeroPedido").value(12345))
+				.andExpect(jsonPath("$.usuario").value("usuario1"))
+                .andExpect(jsonPath("$.observaciones").value("Observaciones del pedido"))
+				.andExpect(jsonPath("$.estado").value("ACEPTADO"));
+		;
+	}
+
+    @Test
+	void testDelete() throws Exception {
+		Mockito.when(PedidoService.getPedidoByNroPedido("12345")).thenReturn(pedido);
+		Mockito.doNothing().when(PedidoService).deletePedidoByNumero("12345");
+
+		mockMvc.perform(delete("/api/pedidos/nroPedido/12345")).andExpect(status().isNoContent());
+	}
+
+
+
+
+    @Test
+	void testUpdate() throws Exception {
+		Mockito.when(PedidoService.getPedidoByNroPedido("12345")).thenReturn(pedido);
+        Mockito.when(PedidoService.update(pedido, pedido.getId())).thenReturn(pedido2);
+        //Mockito.when(PedidoService.update(Mockito.any(Pedido.class),EstadoPedido.RECHAZADO);
+      mockMvc.perform(put("/api/pedidos/nroPedido/12345/estado/RECHAZADO")).andExpect(status().isOk())
+      .andExpect(jsonPath("$.numeroPedido").value(12345))
+      .andExpect(jsonPath("$.estado").value("RECHAZADO"));
+		
+	}
+
+
+
+    private static String asJsonString(final Object obj) {
+		try {
+			return new ObjectMapper().writeValueAsString(obj);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 }
