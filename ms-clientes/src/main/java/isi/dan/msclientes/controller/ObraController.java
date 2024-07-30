@@ -48,7 +48,8 @@ public class ObraController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Obra> update(@PathVariable Integer id, @RequestBody @Valid Obra obra) throws ObraNotFoundException {
+	public ResponseEntity<Obra> update(@PathVariable Integer id, @RequestBody @Valid Obra obra)
+			throws ObraNotFoundException {
 		if (!obraService.findById(id).isPresent()) {
 			throw new ObraNotFoundException("Obra " + id + " no encontrada");
 		}
@@ -65,8 +66,16 @@ public class ObraController {
 		return ResponseEntity.noContent().build();
 	}
 
+	@PutMapping("/{id}/asignar/{idCliente}")
+	public ResponseEntity<Void> asignarCliente(@PathVariable Integer id, @PathVariable Integer idCliente)
+			throws ObraNotFoundException, ClienteNotFoundException {
+		obraService.asignarCliente(id, idCliente);
+		return ResponseEntity.noContent().build();
+	}
+
 	@PutMapping("/{id}/habilitar")
-	public ResponseEntity<Obra> habilitar(@PathVariable Integer id) throws ObraNotFoundException, ObraCambiarEstadoInvalidoException {
+	public ResponseEntity<Obra> habilitar(@PathVariable Integer id)
+			throws ObraNotFoundException, ObraCambiarEstadoInvalidoException {
 		Optional<Obra> obraOpt = obraService.findById(id);
 		if (!obraOpt.isPresent()) {
 			throw new ObraNotFoundException("Obra " + id + " no encontrada");
@@ -75,7 +84,8 @@ public class ObraController {
 	}
 
 	@PutMapping("/{id}/deshabilitar")
-	public ResponseEntity<Obra> deshabilitar(@PathVariable Integer id) throws ObraNotFoundException, ObraCambiarEstadoInvalidoException {
+	public ResponseEntity<Obra> deshabilitar(@PathVariable Integer id)
+			throws ObraNotFoundException, ObraCambiarEstadoInvalidoException {
 		Optional<Obra> obraOpt = obraService.findById(id);
 		if (!obraOpt.isPresent()) {
 			throw new ObraNotFoundException("Obra " + id + " no encontrada");
@@ -84,7 +94,8 @@ public class ObraController {
 	}
 
 	@PutMapping("/{id}/finalizar")
-	public ResponseEntity<Obra> finalizar(@PathVariable Integer id) throws ObraNotFoundException, ObraCambiarEstadoInvalidoException {
+	public ResponseEntity<Obra> finalizar(@PathVariable Integer id)
+			throws ObraNotFoundException, ObraCambiarEstadoInvalidoException {
 		Optional<Obra> obraOpt = obraService.findById(id);
 		if (!obraOpt.isPresent()) {
 			throw new ObraNotFoundException("Obra " + id + " no encontrada");

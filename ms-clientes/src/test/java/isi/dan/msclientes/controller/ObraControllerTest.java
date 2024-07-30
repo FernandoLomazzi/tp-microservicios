@@ -8,10 +8,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import isi.dan.msclientes.exception.ObraCambiarEstadoInvalidoException;
+import isi.dan.msclientes.model.Cliente;
+import isi.dan.msclientes.model.Obra;
+import isi.dan.msclientes.servicios.ObraService;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Optional;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -20,13 +24,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import isi.dan.msclientes.exception.ObraCambiarEstadoInvalidoException;
-import isi.dan.msclientes.model.Cliente;
-import isi.dan.msclientes.model.Obra;
-import isi.dan.msclientes.servicios.ObraService;
 
 @WebMvcTest(ObraController.class)
 public class ObraControllerTest {

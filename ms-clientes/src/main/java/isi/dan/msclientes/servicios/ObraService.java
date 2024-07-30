@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import isi.dan.msclientes.dao.ObraRepository;
 import isi.dan.msclientes.exception.ClienteNotFoundException;
 import isi.dan.msclientes.exception.ObraCambiarEstadoInvalidoException;
+import isi.dan.msclientes.exception.ObraNotFoundException;
 import isi.dan.msclientes.model.Cliente;
 import isi.dan.msclientes.model.EstadoObra;
 import isi.dan.msclientes.model.Obra;
@@ -44,6 +45,22 @@ public class ObraService {
 		return obraRepository.save(obra);
 	}
 
+	public void asignarCliente(Integer obraId, Integer clienteId) throws ObraNotFoundException, ClienteNotFoundException {
+		Obra obra;
+		Cliente cliente;
+		try {
+			obra = this.findById(obraId).orElseThrow();
+		}catch(NoSuchElementException e) {
+			throw new ObraNotFoundException("Obra " + obraId + " no encontrada");
+		} try {
+			cliente = clienteService.findById(clienteId).orElseThrow();
+		}catch(NoSuchElementException e) {
+			throw new ClienteNotFoundException("Cliente " + clienteId + " no encontrado");
+		} 
+		obra.setCliente(cliente);
+		this.update(obra);
+	}
+	
 	public Obra update(Obra obra) {
 		return obraRepository.save(obra);
 	}
