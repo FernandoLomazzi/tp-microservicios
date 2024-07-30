@@ -84,7 +84,6 @@ public class ClienteControllerTest {
 				.andExpect(status().isOk()).andExpect(jsonPath("$.nombre").value("Test Cliente"))
 				.andExpect(jsonPath("$.correoElectronico").value("test@cliente.com"))
 				.andExpect(jsonPath("$.maximoDescubierto").value(150000));
-		;
 	}
 
 	@Test
@@ -102,7 +101,6 @@ public class ClienteControllerTest {
 				.andExpect(status().isOk()).andExpect(jsonPath("$.nombre").value("Test Cliente updated"))
 				.andExpect(jsonPath("$.correoElectronico").value("test@cliente-updated.com"))
 				.andExpect(jsonPath("$.maximoDescubierto").value(10000));
-		;
 	}
 
 	@Test
