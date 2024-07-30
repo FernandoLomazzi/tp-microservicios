@@ -16,6 +16,7 @@ public class TestMsPedidosApplication {
 	MongoDBContainer mongoDbContainer() {
 		return new MongoDBContainer(DockerImageName.parse("mongo:latest"));
 	}
+	
 
 	@Bean
 	@ServiceConnection
