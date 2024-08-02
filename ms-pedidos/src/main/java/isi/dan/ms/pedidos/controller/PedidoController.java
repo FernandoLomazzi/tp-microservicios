@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 import java.time.Instant;
 import java.util.List;
 
-
+@CrossOrigin
 @RestController
 @RequestMapping("/api/pedidos")
 public class PedidoController {
