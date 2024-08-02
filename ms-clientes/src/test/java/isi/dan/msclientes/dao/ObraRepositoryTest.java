@@ -1,10 +1,11 @@
 package isi.dan.msclientes.dao;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import isi.dan.msclientes.model.Cliente;
+import isi.dan.msclientes.model.Obra;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,9 +21,6 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
-import isi.dan.msclientes.model.Cliente;
-import isi.dan.msclientes.model.Obra;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest

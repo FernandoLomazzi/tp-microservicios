@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -15,6 +14,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @ControllerAdvice
 public class RestControllerException {
@@ -79,6 +79,9 @@ public class RestControllerException {
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorInfo> handleOtherExceptions(Exception ex) {
 		logger.error("ERROR MS CLIENTES", ex);
+		if(ex instanceof NoResourceFoundException) {
+			logger.error(((NoResourceFoundException) ex).getResourcePath());
+		}
 		String detalle = ex.getCause() == null ? "error en el servidor" : ex.getCause().getMessage();
 		return new ResponseEntity<ErrorInfo>(
 				new ErrorInfo(Instant.now(), ex.getMessage(), detalle, HttpStatus.INTERNAL_SERVER_ERROR.value()),

@@ -1,8 +1,15 @@
 package isi.dan.msclientes.controller;
 
+import isi.dan.msclientes.aop.LogExecutionTime;
+import isi.dan.msclientes.exception.ClienteNotFoundException;
+import isi.dan.msclientes.exception.UsuarioNotFoundException;
+import isi.dan.msclientes.model.Cliente;
+import isi.dan.msclientes.model.Usuario;
+import isi.dan.msclientes.servicios.ClienteService;
+import isi.dan.msclientes.servicios.UsuarioService;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,15 +22,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import isi.dan.msclientes.aop.LogExecutionTime;
-import isi.dan.msclientes.exception.ClienteNotFoundException;
-import isi.dan.msclientes.exception.UsuarioNotFoundException;
-import isi.dan.msclientes.model.Cliente;
-import isi.dan.msclientes.model.Usuario;
-import isi.dan.msclientes.servicios.ClienteService;
-import isi.dan.msclientes.servicios.UsuarioService;
-import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/usuarios")

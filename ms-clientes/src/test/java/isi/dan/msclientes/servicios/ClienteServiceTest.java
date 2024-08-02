@@ -4,19 +4,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import isi.dan.msclientes.dao.ClienteRepository;
+import isi.dan.msclientes.model.Cliente;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-
-import isi.dan.msclientes.dao.ClienteRepository;
-import isi.dan.msclientes.model.Cliente;
 
 @SpringBootTest
 public class ClienteServiceTest {

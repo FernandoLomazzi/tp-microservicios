@@ -1,12 +1,5 @@
 package isi.dan.msclientes.servicios;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import isi.dan.msclientes.dao.ObraRepository;
 import isi.dan.msclientes.exception.ClienteNotFoundException;
 import isi.dan.msclientes.exception.ObraCambiarEstadoInvalidoException;
@@ -14,6 +7,11 @@ import isi.dan.msclientes.exception.ObraNotFoundException;
 import isi.dan.msclientes.model.Cliente;
 import isi.dan.msclientes.model.EstadoObra;
 import isi.dan.msclientes.model.Obra;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class ObraService {
