@@ -65,13 +65,15 @@ public class ClienteController {
 
 	@PutMapping("/{id}")
 	@LogExecutionTime
-	public ResponseEntity<Cliente> update(@PathVariable final Integer id, @RequestBody @Valid Cliente cliente)
+	public ResponseEntity<Cliente> update(@PathVariable final Integer id, @RequestBody @Valid Cliente clienteUpdated)
 			throws ClienteNotFoundException {
-		if (!clienteService.findById(id).isPresent()) {
+		Optional<Cliente> cliente = clienteService.findById(id);
+		if (!cliente.isPresent()) {
 			throw new ClienteNotFoundException("Cliente " + id + " no encontrado");
 		}
-		cliente.setId(id);
-		return ResponseEntity.ok(clienteService.update(cliente));
+		clienteUpdated.setId(id);
+		clienteUpdated.setCantObrasDisponibles(cliente.get().getCantObrasDisponibles());
+		return ResponseEntity.ok(clienteService.update(clienteUpdated));
 	}
 
 	@DeleteMapping("/{id}")
