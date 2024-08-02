@@ -99,6 +99,7 @@ public class PedidoService {
             }
             
         }
+            
         return pedidoRepository.save(pedido);
     }
 
@@ -123,7 +124,21 @@ public class PedidoService {
         return pedidoRepository.save(pedidoUpdateable);
     }
 
+    public List<Pedido> getAllPedidoByCliente(String id){
+        List<Pedido> pedidos = new ArrayList<Pedido>();
+        log.info("Entré al servicio");
+        for(Pedido p: this.getAllPedidos()){
+            log.info("pedido con id cliente:"+ p.getCliente().getId());
+            log.info("id argumento: "+id);
+            if(String.valueOf(p.getCliente().getId()).equals(id)){
+                pedidos.add(p);
+                log.info("Paso!");
+            }
+            
+        }
 
+        return pedidos;
+    }
 
     
     public void restockProducts(Pedido pedido){
@@ -139,6 +154,7 @@ public class PedidoService {
         log.info("entrado a getPedidoByNro");
         Pedido pedido = new Pedido();
         for(Pedido p: this.getAllPedidos()){
+            
             if(p.getNumeroPedido()==Integer.parseInt(nroPedido)){
                 pedido= p;
                 break;
