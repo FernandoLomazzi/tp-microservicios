@@ -34,7 +34,7 @@ public class ProductoService {
 		Producto prod = productoRepository.findById(productId)
 				.orElseThrow(() -> new ProductoNotFoundException(productId));
 		prod.setStockActual(prod.getStockActual() - stockChange);
-		if(prod.getStockActual() < prod.getStockMinimo()) {
+		if (prod.getStockActual() < prod.getStockMinimo()) {
 			// generar pedido
 			prod.setStockActual(prod.getStockActual() + 25);
 		}

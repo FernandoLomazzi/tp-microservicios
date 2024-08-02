@@ -1,4 +1,5 @@
 package isi.dan.ms.pedidos.modelo;
+
 import java.math.BigDecimal;
 
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -8,7 +9,7 @@ import lombok.Data;
 @Data
 @Document(collection = "obras")
 public class Obra {
-    Integer id;
+	Integer id;
 	String direccion;
 	Boolean esRemodelacion;
 	float lat;

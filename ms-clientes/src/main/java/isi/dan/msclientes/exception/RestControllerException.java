@@ -40,7 +40,7 @@ public class RestControllerException {
 				new ErrorInfo(Instant.now(), e.getMessage(), detalle, HttpStatus.NOT_FOUND.value()),
 				HttpStatus.NOT_FOUND);
 	}
-	
+
 	@ExceptionHandler(UsuarioNotFoundException.class)
 	public ResponseEntity<ErrorInfo> handleUsuarioNotFoundException(UsuarioNotFoundException e) {
 		logger.error("ERROR Buscando Usuario ", e);
@@ -79,7 +79,7 @@ public class RestControllerException {
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorInfo> handleOtherExceptions(Exception ex) {
 		logger.error("ERROR MS CLIENTES", ex);
-		if(ex instanceof NoResourceFoundException) {
+		if (ex instanceof NoResourceFoundException) {
 			logger.error(((NoResourceFoundException) ex).getResourcePath());
 		}
 		String detalle = ex.getCause() == null ? "error en el servidor" : ex.getCause().getMessage();
