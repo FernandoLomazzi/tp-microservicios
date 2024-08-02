@@ -65,6 +65,23 @@ public class PedidoController {
         }
         
     }
+    @GetMapping("/nroCliente/{id}")
+    public ResponseEntity<List<Pedido>> getPedidoByCliente(@PathVariable String id) throws ClienteNotFoundException {
+        log.info("Entrando al método getPedidoByCliente con id: " + id);
+      
+        List<Pedido> pedidos = pedidoService.getAllPedidoByCliente(id);
+        log.info("recuperé pedidos de cliente");
+        
+        
+        if(!pedidos.isEmpty()){
+            log.info(pedidos.getFirst().getId());
+           return ResponseEntity.ok(pedidos);
+        }else{
+            throw new ClienteNotFoundException("no se encuentran pedidos para el cliente con id: '" + id + "'");
+        }
+        
+    }
+
     @DeleteMapping("/nroPedido/{id}")
     public ResponseEntity<Pedido> DeletePedidoBynro(@PathVariable String id) throws PedidoNotFoundException {
         log.info("Entrando al método DeletePedidoBynro con id: " + id);
