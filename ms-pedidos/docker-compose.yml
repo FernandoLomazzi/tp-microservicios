@@ -38,6 +38,7 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
+      SPRING_EUREKA_DEFAULT_ZONE: http://ms-eureka-svc:8761/eureka/
       SPRING_DATA_MONGODB_HOST: mongo-dan
       SPRING_DATA_MONGODB_PORT: 27017
       SPRING_DATA_MONGODB_DATABASE: pedidosdb
